@@ -21,3 +21,4 @@ string quebra_chave(string texto, int tamanho);
 void encontra_chave(string texto, int idioma);
 
 string padroniza2(string texto);
+

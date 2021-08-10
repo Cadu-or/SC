@@ -6,7 +6,7 @@ int main(){
     char op;
     string chave, texto, ans;
     int idioma=-1;
-    
+    /*menu interativo*/
     do{
         cout << "MENU\n\tFUNCIONALIDADES" << endl;
         cout << "1 - Codificar texto" << endl;

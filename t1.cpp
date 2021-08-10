@@ -16,6 +16,7 @@ vector <double> portuguesfreq = {0.14630, 0.01040, 0.03880, 0.04990, 0.12570, 0.
 
 vector <vector <string> > fatias(26);
 
+/**/
 string cifrar(string texto, string chave){
     string ans;
     int i = 0;
