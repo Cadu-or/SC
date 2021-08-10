@@ -3,7 +3,7 @@
 using namespace std;
 
 int main(){
-    int op = 0;
+    char op;
     string chave, texto, ans;
     int idioma=-1;
     
@@ -16,7 +16,7 @@ int main(){
         cin >> op;
 
         switch(op){
-            case 1:
+            case '1':
                 cout << "Digite o texto:" << endl;
                 cin.ignore();
                 getline(cin, texto);
@@ -26,7 +26,7 @@ int main(){
                 ans = cifrar(texto, chave);
                 cout << ans << endl;
                 break;
-            case 2:
+            case '2':
                 cout << "Digite o texto a ser decodificado:" << endl;
                 cin.ignore();
                 getline(cin, texto);
@@ -36,7 +36,7 @@ int main(){
                 ans = decifrar(texto, chave);
                 cout << ans << endl;;
                 break;
-            case 3:
+            case '3':
                 cout << "Digite o texto cifrado: " << endl;
                 cin.ignore();
                 getline(cin, texto);
@@ -49,7 +49,7 @@ int main(){
                 encontra_chave(texto, idioma);
                 break;
         }
-    }while(op != 4);
+    }while(op != '4');
 
     
     return 0;

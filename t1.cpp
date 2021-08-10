@@ -4,15 +4,17 @@ using namespace std;
 
 char alfabeto[26] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 
-vector <double> englishfreq = {0.08167, 0.01492, 0.02782, 0.04253, 0.12702, 0.02228, 0.02015,
-                            0.06094, 0.06966, 0.00153, 0.00772, 0.04025, 0.02406, 0.06749,
-                            0.07507, 0.01929, 0.00095, 0.05987, 0.06327, 0.09056, 
-                            0.02758, 0.00978, 0.02360, 0.00150, 0.01974, 0.00074};
+vector <double> inglesfreq = {0.08167, 0.01492, 0.02782, 0.04253, 0.12702, 0.02228, 
+                              0.02015, 0.06094, 0.06966, 0.00153, 0.00772, 0.04025, 
+                              0.02406, 0.06749, 0.07507, 0.01929, 0.00095, 0.05987, 
+                              0.06327, 0.09056, 0.02758, 0.00978, 0.02360, 0.00150, 0.01974, 0.00074};
 
 vector <double> portuguesfreq = {0.14630, 0.01040, 0.03880, 0.04990, 0.12570, 0.01020, 
-                                0.01300, 0.01280, 0.06180, 0.00400, 0.00020, 0.02780, 
-                                0.04740, 0.05050, 0.1073, 0.02520, 0.01200, 0.06530, 
-                                0.07810, 0.04340, 0.04630, 0.01670, 0.00100, 0.02100, 0.00100, 0.04700};
+                                 0.01300, 0.01280, 0.06180, 0.00400, 0.00020, 0.02780, 
+                                 0.04740, 0.05050, 0.10730, 0.02520, 0.01200, 0.06530, 
+                                 0.07810, 0.04340, 0.04630, 0.01670, 0.00100, 0.02100, 0.00100, 0.04700};
+
+vector <vector <string> > fatias(26);
 
 string cifrar(string texto, string chave){
     string ans;
@@ -92,33 +94,35 @@ string padroniza2(string texto){
 }
 
 double i_coincidencia(string texto){
-    double soma_frequencia, indice_coincidencia; 
+    double soma_freq, i_coincidencia; 
     double tamanho = texto.length();
 
     for(int i = 0; i < 26; i++){
         int contador = count(texto.begin(), texto.end(), alfabeto[i]);
-        soma_frequencia += (contador * (contador - 1));
+        soma_freq += (contador * (contador - 1));
         // cout << contador << endl;
     }
 
-    indice_coincidencia = soma_frequencia/(tamanho*(tamanho-1));
-    //cout << indice_coincidencia << endl;
+    i_coincidencia = soma_freq/(tamanho*(tamanho-1));
+    //cout << i_coincidencia << endl;
     
-    return indice_coincidencia;
+    return i_coincidencia;
 }
 
 
 int tamanho_chave(string texto){
-    vector <double> indices_c, aux;
     int chute1 = 0, chute2 = 0;
+    vector <double> indices_c, aux;
     
-    for(int i = 0; i < MAX_TAMANHO_CHAVE; i++){
+    for(int i = 1; i <= MAX_TAMANHO_CHAVE; i++){ // 1 a 20
         double media_ic = 0.0, ic_soma = 0.0;
         for(int j = 0; j < i; j++){
             string sequencia = "";
             for(int k = 0; k < texto.length() - j; k+=i){
                 sequencia += texto[j+k];
             }
+            fatias[i].push_back(sequencia);
+            // cout << sequencia << endl; // debug
             if(sequencia.length() > 1){
                 ic_soma += i_coincidencia(sequencia); 
             }
@@ -134,10 +138,10 @@ int tamanho_chave(string texto){
 
     for(int i = 0; i < indices_c.size(); i++){
         if(aux[0] == indices_c[i]){
-            chute1 = i;
+            chute1 = i+1;
         }
         if(aux[1] == indices_c[i]){
-            chute2 = i;
+            chute2 = i+1;
         }
     }
 
@@ -150,59 +154,57 @@ int tamanho_chave(string texto){
 
 char frequencia(string fatia, int idioma){
     // cout << fatia << endl;
-    vector<double> quadrados(26), aux2, lan;
-    
-    // vector <char> sequencia;
+    vector<double> quadrados(26), aux2, lingua;
 
     if(idioma == 1){
-        lan = englishfreq;
+        lingua = inglesfreq;
     }
     else{
-        lan = portuguesfreq;
+        lingua = portuguesfreq;
     }
 
-    for(int i = 0; i < 26; i++){
+    for(int i = 0; i < 26; i++){                            // quantidade de shift
         vector <char> sequencia;
 
-        double quadrado=0.0;
+        double qaux =0.0;
         
-        for(int j = 0; j < fatia.size(); j++){
-            char pfv = (((fatia[j]-97-i+26) % 26)+97);
-            sequencia.push_back(pfv);
+        for(int j = 0; j < fatia.size(); j++){              // Shiftando i vezes
+            char seq = (((fatia[j]-97-i+26) % 26)+97);
+            sequencia.push_back(seq);
         }
 
         // cout << i << "--------------" << endl;
-        // cout << sequencia.size() << endl;
+        // cout << sequencia.size() << endl; 
         // for(int j = 0; j < sequencia.size(); j++){
         //     cout << sequencia[j] << ", ";
         // }
         // cout << endl;
 
-        vector<double> aux(26,0);
-        for(int j = 0; j < sequencia.size(); j++){
-            aux[(int)(sequencia[j]-97)]++;
+        vector<double> cont_freq(26,0);
+
+        for(int j = 0; j < sequencia.size(); j++){ // contador de frequencia 
+            cont_freq[(int)(sequencia[j]-97)]++;
+        }
+ 
+        for(int j = 0; j < 26; j++){
+            cont_freq[j] = (cont_freq[j]/(double)fatia.size()); // media das frquencias
         }
 
-        
         for(int j = 0; j < 26; j++){
-            aux[j] *= (1.0/(double)fatia.size()); 
-        }
-
-        for(int j = 0; j < 26; j++){
-            double aux1 = (aux[j] - (double)(lan[j]));
-            quadrado += (aux1*aux1/(double)(lan[j]));
+            double aux1 = (cont_freq[j] - (double)(lingua[j])); // diferenca da media
+            qaux += (aux1*aux1/(double)(lingua[j]));
         }
         
-        quadrados[i] = quadrado;
+        quadrados[i] = qaux;
     }
 
     aux2 = quadrados;
     sort(aux2.begin(), aux2.end());
-    int index = 0;
+    int indice = 0;
     
     for(int i = 0; i < quadrados.size(); i++){
         if(aux2[0] == quadrados[i]){
-            index = i;
+            indice = i;
         }
     }
 
@@ -212,18 +214,16 @@ char frequencia(string fatia, int idioma){
     // cout << endl;
 
     // cout << index << endl;
-    return (char)(index+97);
+    return (char)(indice+97);
 }
 
 string quebra_chave(string texto, int tamanho, int idioma){
     string chave;
 
     for(int i = 0; i < tamanho; i++){
-        string fatia;
-        for(int k = 0; k < (texto.size()-i); k+=tamanho){
-            fatia += texto[i+k];
-        }
+        string fatia = fatias[tamanho][i];
         chave += frequencia(fatia, idioma);
+        fatias[i].clear();
     }
 
     return chave;
@@ -239,7 +239,7 @@ void encontra_chave(string texto, int idioma){
 
     cout << "Chave: " << chave << endl;
 
-     texto = decifrar(texto, chave);
+    texto = decifrar(texto, chave);
 
-     cout << "Texto: " << texto << endl;
+    cout << "Texto: " << texto << endl;
 }

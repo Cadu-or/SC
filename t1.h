@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+
 #define MAX_TAMANHO_CHAVE 20
 
 using namespace std;
