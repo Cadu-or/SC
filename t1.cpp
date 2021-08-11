@@ -2,21 +2,28 @@
 
 using namespace std;
 
+/*Vetor com as letras do alfabeto que e consultado nas funcoes de cifragem e decifragem */
+
 char alfabeto[26] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+
+/*Vetores com a frequencias das palavras em portugues e ingles*/
 
 vector <double> inglesfreq = {0.08167, 0.01492, 0.02782, 0.04253, 0.12702, 0.02228, 
                               0.02015, 0.06094, 0.06966, 0.00153, 0.00772, 0.04025, 
                               0.02406, 0.06749, 0.07507, 0.01929, 0.00095, 0.05987, 
-                              0.06327, 0.09056, 0.02758, 0.00978, 0.02360, 0.00150, 0.01974, 0.00074};
+                              0.06327, 0.09056, 0.02758, 0.00978, 0.02360, 0.00150, 
+                              0.01974, 0.00074};
 
 vector <double> portuguesfreq = {0.14630, 0.01040, 0.03880, 0.04990, 0.12570, 0.01020, 
                                  0.01300, 0.01280, 0.06180, 0.00400, 0.00020, 0.02780, 
                                  0.04740, 0.05050, 0.10730, 0.02520, 0.01200, 0.06530, 
-                                 0.07810, 0.04340, 0.04630, 0.01670, 0.00100, 0.02100, 0.00100, 0.04700};
+                                 0.07810, 0.04340, 0.04630, 0.01670, 0.00100, 0.02100, 
+                                 0.00100, 0.04700};
 
+/*Vetor que armazena as fatias do texto na funcao tamanho_chave*/
 vector <vector <string> > fatias(26);
 
-/**/
+/*Funcao que recebe um texto e uma chave e realiza a cifragem */
 string cifrar(string texto, string chave){
     string ans;
     int i = 0;
@@ -43,6 +50,7 @@ string cifrar(string texto, string chave){
     return ans;
 }
 
+/*Funcao que recebe um texto e uma chave e realiza a decifragem */
 string decifrar(string texto, string chave){
     string ans;
     int i=0, j=0;
@@ -67,6 +75,8 @@ string decifrar(string texto, string chave){
     return ans;
 }
 
+/* Funcao que converte todas as letras para minusculo */
+
 string padroniza(string texto){
     string padrao;
     for(int i = 0; i <= texto.size(); i++){
@@ -80,6 +90,7 @@ string padroniza(string texto){
     return padrao;
 }
 
+/* Funcao que padroniza os textos, ignorando espacos, caracteres especiais e passa as letras para minusculo */
 string padroniza2(string texto){
     string padrao;
     for(int i = 0; i < texto.size(); i++){
@@ -94,23 +105,22 @@ string padroniza2(string texto){
     return padrao;
 }
 
+/*Funcao que calcula o indice de coincidencia de uma fatia*/
 double i_coincidencia(string texto){
     double soma_freq, i_coincidencia; 
     double tamanho = texto.length();
 
     for(int i = 0; i < 26; i++){
-        int contador = count(texto.begin(), texto.end(), alfabeto[i]);
+        int contador = count(texto.begin(), texto.end(), alfabeto[i]); // Formula do indice de coincidencia
         soma_freq += (contador * (contador - 1));
-        // cout << contador << endl;
     }
 
     i_coincidencia = soma_freq/(tamanho*(tamanho-1));
-    //cout << i_coincidencia << endl;
     
     return i_coincidencia;
 }
 
-
+/* Funcao que recebe o texto cifrado e retorna o tamanho da chave*/
 int tamanho_chave(string texto){
     int chute1 = 0, chute2 = 0;
     vector <double> indices_c, aux;
@@ -123,7 +133,6 @@ int tamanho_chave(string texto){
                 sequencia += texto[j+k];
             }
             fatias[i].push_back(sequencia);
-            // cout << sequencia << endl; // debug
             if(sequencia.length() > 1){
                 ic_soma += i_coincidencia(sequencia); 
             }
@@ -153,9 +162,10 @@ int tamanho_chave(string texto){
     }
 }
 
+/*Funcao que analisa a frequencia das letras e aplica o metodo X2 para encontrar um caractere
+da chave*/
 char frequencia(string fatia, int idioma){
-    // cout << fatia << endl;
-    vector<double> quadrados(26), aux2, lingua;
+    vector<double> X2(26), aux2, lingua;
 
     if(idioma == 1){
         lingua = inglesfreq;
@@ -164,60 +174,49 @@ char frequencia(string fatia, int idioma){
         lingua = portuguesfreq;
     }
 
-    for(int i = 0; i < 26; i++){                            // quantidade de shift
+    for(int i = 0; i < 26; i++){                            // Quantidade de deslocamento
         vector <char> sequencia;
 
         double qaux =0.0;
         
-        for(int j = 0; j < fatia.size(); j++){              // Shiftando i vezes
+        for(int j = 0; j < fatia.size(); j++){              // Desloca i vezes
             char seq = (((fatia[j]-97-i+26) % 26)+97);
             sequencia.push_back(seq);
         }
 
-        // cout << i << "--------------" << endl;
-        // cout << sequencia.size() << endl; 
-        // for(int j = 0; j < sequencia.size(); j++){
-        //     cout << sequencia[j] << ", ";
-        // }
-        // cout << endl;
-
         vector<double> cont_freq(26,0);
 
-        for(int j = 0; j < sequencia.size(); j++){ // contador de frequencia 
+        for(int j = 0; j < sequencia.size(); j++){          // Contador de frequencia 
             cont_freq[(int)(sequencia[j]-97)]++;
         }
  
         for(int j = 0; j < 26; j++){
-            cont_freq[j] = (cont_freq[j]/(double)fatia.size()); // media das frquencias
+            cont_freq[j] = (cont_freq[j]/(double)fatia.size()); // Media das frequencias
         }
 
         for(int j = 0; j < 26; j++){
-            double aux1 = (cont_freq[j] - (double)(lingua[j])); // diferenca da media
+            double aux1 = (cont_freq[j] - (double)(lingua[j])); // Formula X2
             qaux += (aux1*aux1/(double)(lingua[j]));
         }
         
-        quadrados[i] = qaux;
+        X2[i] = qaux;
     }
 
-    aux2 = quadrados;
+    aux2 = X2;
     sort(aux2.begin(), aux2.end());
     int indice = 0;
     
-    for(int i = 0; i < quadrados.size(); i++){
-        if(aux2[0] == quadrados[i]){
+    for(int i = 0; i < X2.size(); i++){
+        if(aux2[0] == X2[i]){
             indice = i;
         }
     }
-
-    // for(int i = 0; i < aux2.size(); i++){
-    //     cout << aux2[i] << ", ";
-    // }
-    // cout << endl;
-
-    // cout << index << endl;
+    
     return (char)(indice+97);
 }
 
+/* Funcao que recebe o texto cifrado, o tamanho da chave e o idioma do texto. 
+De acordo com as fatias escolhidas chama a funcao frequencia que retorna cada letra da chave.*/
 string quebra_chave(string texto, int tamanho, int idioma){
     string chave;
 
@@ -230,6 +229,9 @@ string quebra_chave(string texto, int tamanho, int idioma){
     return chave;
 }
 
+/*Funcao corrente dos metodos da chave, chama primeiramente a funcao responsavel pelo tamanho da chave, 
+em seguida quebra_chave que encaminha o processo de descobrir os caracteres da chave, por ultimo chama
+a funcao de decifragem com o texto e a respectiva chave*/
 void encontra_chave(string texto, int idioma){
     int tamanho = tamanho_chave(texto);
     string chave;
