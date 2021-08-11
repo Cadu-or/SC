@@ -1,3 +1,9 @@
+/* 
+Seguranca Computacional - 2021/1 - Trabalho 1
+Alice de Lima da Silva - 180112601
+Carlos Eduardo de Oliveira Ribeiro - 180099094
+*/
+
 #include <bits/stdc++.h>
 
 #define MAX_TAMANHO_CHAVE 20
