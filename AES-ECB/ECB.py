@@ -5,11 +5,6 @@ import cv2
 import sys
 import io
 
-key = [0x2b, 0x28, 0xab, 0x09,
-       0x7e, 0xae, 0xf7, 0xcf,
-       0x15, 0xd2, 0x15, 0x4f,
-       0x16, 0xa6, 0x88, 0x3c]
-
 def JoinBlocks(blocos, imagem):
     output = []
     aux2 = []
@@ -60,13 +55,27 @@ def ECBCrypto(filenamem, round, op, chave):
     cv2.imshow("Original", imagem)
     cv2.waitKey(0)
 
-    print("Cifrando...")
-    cifrado = imagem
-    bloco = CreateBlock(imagem)
-    bloco = SplitBlocks(bloco, op, chave, round)
-    cifrado = JoinBlocks(bloco, imagem)
+    if(op == 1):
+        print("Cifrando...")
+        cifrado = imagem
+        bloco = CreateBlock(imagem)
+        bloco = SplitBlocks(bloco, op, chave, round)
+        cifrado = JoinBlocks(bloco, imagem)
 
-    cv2.imwrite("resultado.png", cifrado)
-    cv2.imshow("Original", cifrado)
+        cv2.imwrite("resultado.png", cifrado)
+        cv2.imshow("Original", cifrado)
 
-    cv2.waitKey(-1)
+        cv2.waitKey(-1)
+        
+    elif(op == 2):
+        print("Decifrando...")
+        cifrado = imagem
+        bloco = CreateBlock(imagem)
+        bloco = SplitBlocks(bloco, op, chave, round)
+        cifrado = JoinBlocks(bloco, imagem)
+
+        cv2.imwrite("resultado.png", cifrado)
+        cv2.imshow("Original", cifrado)
+
+        cv2.waitKey(-1)
+    
