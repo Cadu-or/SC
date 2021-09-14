@@ -1,3 +1,4 @@
+from CTR import CTRCypto
 import AES
 import ECB
 
@@ -21,7 +22,7 @@ while(1):
             chave = input("Chave maior que 128 bits, informe outra: ")
             print
         while(len(chave) < 16):
-            chave += '0'
+            chave = chave + '\x00'
         ECB.ECBCrypto(arq, r, 1, bytes(chave, 'ascii'))
 
     elif(op == 2):
@@ -34,7 +35,7 @@ while(1):
             chave = input("Chave maior que 128 bits, informe outra: ")
             print
         while(len(chave) < 16):
-            chave = chave + '0'
+            chave = chave + '\x00'
         ECB.ECBCrypto(arq, r, 2, bytes(chave, 'ascii'))
 
     elif(op == 3):
@@ -48,7 +49,10 @@ while(1):
             chave = input("Chave maior que 128 bits, informe outra: ")
             print
         while(len(chave) < 16):
-            chave = chave + '0'
+            chave = chave + '\x00'
+        
+        CTRCypto(arq, r, op-2, bytes(chave,'ascii'))
+    
         
     elif(op == 4):
         r = int(input("Escolha o numero de rodadas (maximo 13) "))
@@ -60,7 +64,9 @@ while(1):
             chave = input("Chave maior que 128 bits, informe outra: ")
             print
         while(len(chave) < 16):
-            chave = chave + '0'   
+            chave = chave + '\x00'
+        
+        CTRCypto(arq, r, op-2, bytes(chave,'ascii'))
     
     elif(op == 0):
         break

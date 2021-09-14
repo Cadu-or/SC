@@ -17,9 +17,8 @@ def JoinBlocks(blocos, imagem):
                 aux2 = aux2+1
     
     return aux
-                
 
-
+    
 def SplitBlocks(blocos, op, chave, round):
     cifra = []
     cifra_aux = []
@@ -50,6 +49,8 @@ def ECBCrypto(filenamem, round, op, chave):
     chave_aux = []
     for i in range(16):
         chave_aux.append(chave[i])
+
+    # print(chave_aux)
 
     imagem = cv2.imread(filenamem)
     cv2.imshow("Original", imagem)
