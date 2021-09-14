@@ -53,8 +53,6 @@ def CTRCypto(filename, round, op, chave):
     for i in range(16):
         chave_aux.append(chave[i])
     
-    # print(chave_aux)
-    
     imagem = cv2.imread(filename)
     cv2.imshow("Original", imagem)
     cv2.waitKey(0)
