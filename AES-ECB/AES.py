@@ -1,4 +1,5 @@
-Rcon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab]
+Rcon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20,
+        0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab]
 
 sbox = [
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -37,22 +38,25 @@ sboxInv = [
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
 ]
 
+
 def AddRoundKey(block, key):
-    for i in range(len(block)):         #xor do bloco com a chave
+    for i in range(len(block)):  # xor do bloco com a chave
         block[i] = block[i] ^ key[i]
-    
+
     return block
+
 
 def MakeXor(c1, c2):
     c3 = []
     for i in range(len(c1)):
         c3.append(c1[i] ^ c2[i])
-    
+
     return c3
+
 
 def KeyExpansion(key, i):
     last_column = []
-    l1, l2, l3, l4 = [],[],[],[]
+    l1, l2, l3, l4 = [], [], [], []
     for j in range(1, 17):
         if j % 4 == 0:
             last_column.append(key[j-1])
@@ -62,19 +66,19 @@ def KeyExpansion(key, i):
     last_column.append(aux)
     last_column = SubBytes(last_column)
 
-    for j in range (0,4):
-        if j >= 1 :
+    for j in range(0, 4):
+        if j >= 1:
             aux_col = []
             for w in range(0, 16):
                 if(w % 4 == 0):
                     aux_col.append(key[w+j])
-            
-            ant_c = MakeXor(aux_col, ant_c) 
+
+            ant_c = MakeXor(aux_col, ant_c)
             l1.append(ant_c[0])
             l2.append(ant_c[1])
             l3.append(ant_c[2])
             l4.append(ant_c[3])
-            
+
         else:
             n_col = []
             n_col.extend((key[0], key[4], key[8], key[12]))
@@ -89,11 +93,13 @@ def KeyExpansion(key, i):
 
     return (l1+l2+l3+l4)
 
+
 def SubBytes(block):
     for i in range(len(block)):
         block[i] = sbox[block[i]]
-    
+
     return block
+
 
 def SubBytesInv(block):
     for i in range(len(block)):
@@ -101,20 +107,24 @@ def SubBytesInv(block):
 
     return block
 
+
 def Rotate(word, n):
-	    return word[n:]+word[0:n]
+    return word[n:]+word[0:n]
+
 
 def ShiftRows(block):
     for i in range(4):
-        block[i*4:i*4+4] = Rotate(block[i*4:i*4+4],i)
-        
+        block[i*4:i*4+4] = Rotate(block[i*4:i*4+4], i)
+
     return block
+
 
 def ShiftRowsInv(block):
     for i in range(4):
-        block[i*4:i*4+4] = Rotate(block[i*4:i*4+4],-i)
-    
+        block[i*4:i*4+4] = Rotate(block[i*4:i*4+4], -i)
+
     return block
+
 
 def GaloisMult(b):
     if b & 0x80:
@@ -123,7 +133,8 @@ def GaloisMult(b):
     else:
         b = b << 1
 
-    return b & 0xFF # get the first 8 bits.
+    return b & 0xFF  # get the first 8 bits.
+
 
 def mix_one_column(c):
     t = c[0] ^ c[1] ^ c[2] ^ c[3]
@@ -134,6 +145,7 @@ def mix_one_column(c):
     c[3] ^= GaloisMult(c[3] ^ u) ^ t
 
     return c
+
 
 def MixColumn(block):
     l1, l2, l3, l4 = [], [], [], []
@@ -147,6 +159,7 @@ def MixColumn(block):
         l4.append(column[3])
 
     return (l1+l2+l3+l4)
+
 
 def InvMixColumn(block):
     l1, l2, l3, l4 = [], [], [], []
@@ -168,6 +181,7 @@ def InvMixColumn(block):
 
     return (MixColumn(l1+l2+l3+l4))
 
+
 def AESfunc(n, block, key, op):
     inv_key = []
     aux = key
@@ -177,12 +191,12 @@ def AESfunc(n, block, key, op):
         inv_key.append(aux)
 
     if(op == 1):
-        block = AddRoundKey(block, key)             #primeira iteracao
-        for i in range(1,n):
-            block = SubBytes(block)                 #conversao do bloco utilizando a sbox
-            block = ShiftRows(block)                #shift left das 'linhas'
-            block = MixColumn(block)                #embaralha os elementos por coluna
-            key = KeyExpansion(key, i-1)            #pega nova chave
+        block = AddRoundKey(block, key)  # primeira iteracao
+        for i in range(1, n):
+            block = SubBytes(block)  # conversao do bloco utilizando a sbox
+            block = ShiftRows(block)  # shift left das 'linhas'
+            block = MixColumn(block)  # embaralha os elementos por coluna
+            key = KeyExpansion(key, i-1)  # pega nova chave
             block = AddRoundKey(block, key)
 
         if(n != 0):
@@ -190,7 +204,7 @@ def AESfunc(n, block, key, op):
             block = ShiftRows(block)
             key = KeyExpansion(key, n-1)
             block = AddRoundKey(block, key)
-            
+
     elif(op == 2):
         au1 = n
         block = AddRoundKey(block, inv_key[n])

@@ -1,10 +1,11 @@
-import ECB 
+import ECB
 import AES
 import cv2
 import random
 from random import choice
 import string
 from string import ascii_letters, digits
+
 
 def GetPlaintext(nonce, count):
     bloco = []
@@ -22,7 +23,8 @@ def GetPlaintext(nonce, count):
 
     return bloco
 
-def SetNonce():    
+
+def SetNonce():
     letters = string.ascii_lowercase
     letters2 = string.ascii_uppercase
     numbers = string.digits
@@ -33,18 +35,18 @@ def SetNonce():
 
     return result_str
 
+
 def SplitB(blocos):
     cifra_aux = []
     cifra = []
-    
+
     for j in range(0, len(blocos), 16):
         for i in range(16):
             cifra_aux.append(blocos[i+j])
         cifra.append(cifra_aux)
         cifra_aux = []
-        
-    return cifra
 
+    return cifra
 
 
 def CTRCypto(filename, round, op, chave):
@@ -52,7 +54,7 @@ def CTRCypto(filename, round, op, chave):
     cifrado = []
     for i in range(16):
         chave_aux.append(chave[i])
-    
+
     imagem = cv2.imread(filename)
     cv2.imshow("Original", imagem)
     cv2.waitKey(0)
@@ -67,17 +69,16 @@ def CTRCypto(filename, round, op, chave):
             t = GetPlaintext(str1, i)
             aux = AES.AESfunc(round, t, chave_aux, op)
             cifrado.extend(AES.MakeXor(aux, block[i]))
-        
+
         cifrado = ECB.JoinBlocks(cifrado, imagem)
         cv2.imwrite("resultado.png", cifrado)
         cv2.imshow("Original", cifrado)
         cv2.waitKey(-1)
-        
 
     elif(op == 2):
         nonce = input("Informe o nonce: ")
         print("Decifrando...")
-        
+
         block = ECB.CreateBlock(imagem)
         block = SplitB(block)
 
