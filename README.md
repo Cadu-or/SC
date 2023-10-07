@@ -6,4 +6,4 @@ T1 - Algoritmo que cifra, decifra e aplica um ataque à cifra de Vigenere. (C++)
 
 T2 - Algoritmo AES implementado para a criptografia de imagens utilizando os algoritmos ECB e CTR. (Python)
 
-T3 - Algoritmo RSA (<a href="https://github.com/alice7lima/RSA">link do repositório</a>).
+T3 - Algoritmo RSA.
